@@ -22,7 +22,7 @@ jobs:
               --template-file templates/cloud-infra.yml \
               --stack-name prod-${CIRCLE_WORKFLOW_ID} \
               --parameter-overrides file://parameters/cloud-infra.json
-      - destroy_infrastructure:
+      - destroy_infrastructure
 workflows:
   resources_workflow:
     jobs:
