@@ -8,7 +8,7 @@ commands:
       - run:
           name: destroy cloudformation resources
           command: |
-            aws cloudformation delete-stack --stack-name prod-${CIRCLE_WORKFLOW_ID}
+            aws cloudformation delete-stack --stack-name prod-${CIRCLE_WORKFLOW_ID} --region us-east-2
           when: on_fail
 jobs:
   create_infrastructure:
@@ -22,6 +22,7 @@ jobs:
               --template-file templates/cloud-infra.yml \
               --stack-name prod-${CIRCLE_WORKFLOW_ID} \
               --parameter-overrides file://parameters/cloud-infra.json
+              --region us-east-2
       - destroy_infrastructure
 workflows:
   resources_workflow:
