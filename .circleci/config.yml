@@ -1,0 +1,32 @@
+version: 2.1
+defaults: &defaults
+  docker:
+    - image: amazon/aws-cli
+commands:
+  destroy_infrastructure:
+    steps:
+      - run:
+          name: destroy cloudformation resources
+          command: |
+            aws cloudformation delete-stack --stack-name prod-${CIRCLE_WORKFLOW_ID}
+jobs:
+  create_infrastructure:
+    <<: *defaults
+    steps:
+      - checkout
+      - run:
+          name: Create infrastructure
+          command: |
+            aws cloudformation deploy \
+              --template-file templates/cloud-infra.yml \
+              --stack-name prod-${CIRCLE_WORKFLOW_ID} \
+              --parameter-overrides file://parameters/cloud-infra.json
+      - destroy_infrastructure:
+        when: on_fail
+workflows:
+  resources_workflow:
+    jobs:
+      create_infrastructure
+
+
+    
