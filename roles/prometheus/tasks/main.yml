@@ -18,7 +18,7 @@
   become: yes
   unarchive: 
     src: "https://github.com/prometheus/prometheus/releases/download/v2.27.1/prometheus-2.27.1.linux-amd64.tar.gz"
-    dest: /
+    dest: /home/ubuntu/
     remote_src: yes
 
 - name: cd into prometheus and start service
