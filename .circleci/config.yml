@@ -22,6 +22,14 @@ jobs:
               --template-file templates/cloud-infra.yml \
               --stack-name prod-${CIRCLE_WORKFLOW_ID} \
               --parameter-overrides file://parameters/cloud-infra.json
+      - run:
+          name: add dns name of ec2 instance to inventory
+          command: |
+            aws ec2 describe-instances \
+              --query "Reservations[*].Instances[0].PublicDnsName" \
+              --filters "Name=tag-key,Values=aws:cloudformation:stack-name" "Name=tag-value,Values=prod-${CIRCLE_WORKFLOW_ID}" \
+              --output text >> inventory.txt
+      - run: return 1
       - destroy_infrastructure
 workflows:
   resources_workflow:
