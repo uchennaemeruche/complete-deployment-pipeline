@@ -5,6 +5,7 @@ defaults: &defaults
 commands:
   destroy_infrastructure:
     steps:
+      - checkout
       - run:
           name: destroy cloudformation resources
           command: |
@@ -38,6 +39,7 @@ jobs:
           name: add dns name of ec2 instance to inventory
           command: |
             aws ec2 describe-instances \
+              --region us-east-2
               --query "Reservations[*].Instances[0].PublicDnsName" \
               --filters "Name=tag-key,Values=aws:cloudformation:stack-name" "Name=tag-value,Values=prod-${CIRCLE_WORKFLOW_ID}" \
               --output text >> inventory.txt
