@@ -35,6 +35,7 @@ jobs:
   update_inventory:
     <<: *defaults
     steps:
+      - checkout
       - run:
           name: add dns name of ec2 instance to inventory
           command: |
@@ -63,12 +64,12 @@ workflows:
   resources_workflow:
     jobs:
       - create_infrastructure
-      - update_inventory:
-          requires:
-            - create_infrastructure
-      - configure_infrastructure:
-          requires:
-            - update_inventory
+      # - update_inventory:
+      #     requires:
+      #       - create_infrastructure
+      # - configure_infrastructure:
+      #     requires:
+      #       - update_inventory
 
 
     
