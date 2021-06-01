@@ -63,7 +63,7 @@ jobs:
 workflows:
   resources_workflow:
     jobs:
-      - create_infrastructure
+      # - create_infrastructure
       # - update_inventory:
       #     requires:
       #       - create_infrastructure

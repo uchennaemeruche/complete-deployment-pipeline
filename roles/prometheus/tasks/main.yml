@@ -21,10 +21,9 @@
     dest: /
     remote_src: yes
 
-- name: cd into prometheus
-  command:
-    chdir: prometheus-2.27.1.linux-amd64/
-
-- name:  execute prometheus
+- name: cd into prometheus and start service
   shell: |
     ./prometheus --config.file=./prometheus.yml
+  args:
+    chdir: prometheus-2.27.1.linux-amd64/
+
