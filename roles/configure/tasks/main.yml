@@ -1,0 +1,44 @@
+---
+- name: update apt packages
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: upgrade cache
+  become: yes
+  apt:
+    upgrade: yes
+
+- name: remove dependencies that are no longer required
+  become: yes
+  apt:
+    autoremove: yes
+
+- name: install dependencies
+  become: yes
+  apt:
+    name: ["nodejs", "npm"]
+    state: latest
+    update_cache: yes
+
+- name: install pm2
+  become: yes
+  npm:
+    name: pm2
+    global: yes
+    production: yes
+    state: present
+
+- name: create directory
+  file:
+    path: ~/web_server
+    state: directory
+
+- name: copy index page
+  template:
+    src: files/index.js
+    dest: ~/web_server/
+
+- name: Executing node
+  shell: |
+    pm2 start ~/web_server/index.js -f --name web-server-1

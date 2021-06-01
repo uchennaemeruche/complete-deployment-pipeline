@@ -1,0 +1,6 @@
+---
+- name: Ochestration Playbook
+  hosts: all
+  user: ubuntu
+  roles:
+    - configure

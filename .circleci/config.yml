@@ -22,6 +22,18 @@ jobs:
               --template-file templates/cloud-infra.yml \
               --stack-name prod-${CIRCLE_WORKFLOW_ID} \
               --parameter-overrides file://parameters/cloud-infra.json
+      # - run:
+      #     name: add dns name of ec2 instance to inventory
+      #     command: |
+      #       aws ec2 describe-instances \
+      #         --query "Reservations[*].Instances[0].PublicDnsName" \
+      #         --filters "Name=tag-key,Values=aws:cloudformation:stack-name" "Name=tag-value,Values=prod-${CIRCLE_WORKFLOW_ID}" \
+      #         --output text >> inventory.txt
+      - destroy_infrastructure
+
+  update_inventory:
+    <<: *defaults
+    steps:
       - run:
           name: add dns name of ec2 instance to inventory
           command: |
@@ -29,12 +41,32 @@ jobs:
               --query "Reservations[*].Instances[0].PublicDnsName" \
               --filters "Name=tag-key,Values=aws:cloudformation:stack-name" "Name=tag-value,Values=prod-${CIRCLE_WORKFLOW_ID}" \
               --output text >> inventory.txt
-      - run: return 1
-      - destroy_infrastructure
+
+  configure_infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["34:5d:61:5e:48:c5:3a:b5:f3:87:c9:4f:46:19:13:99"]
+      - run:
+          name: Install Ansible and other dependencies
+          command: |
+            apk add --update ansible
+      - run:
+          name: configure and run ansible playbook
+          command:
+            ansible-playbook -i inventory.txt playbook.yml
 workflows:
   resources_workflow:
     jobs:
       - create_infrastructure
+      - update_inventory:
+          requires:
+            - create_infrastructure
+      - configure_infrastructure:
+          requires:
+            - update_inventory
 
 
     
