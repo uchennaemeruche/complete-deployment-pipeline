@@ -9,6 +9,7 @@ commands:
           name: destroy cloudformation resources
           command: |
             aws cloudformation delete-stack --stack-name prod-${CIRCLE_WORKFLOW_ID}
+          when: on_fail
 jobs:
   create_infrastructure:
     <<: *defaults
@@ -22,7 +23,6 @@ jobs:
               --stack-name prod-${CIRCLE_WORKFLOW_ID} \
               --parameter-overrides file://parameters/cloud-infra.json
       - destroy_infrastructure:
-        when: on_fail
 workflows:
   resources_workflow:
     jobs:
