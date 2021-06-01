@@ -1,0 +1,30 @@
+---
+- name: update apt packages
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: upgrade cache
+  become: yes
+  apt:
+    upgrade: yes
+
+- name: remove dependencies that are no longer required
+  become: yes
+  apt:
+    autoremove: yes
+
+- name: Install dependencies
+  become: yes
+  unarchive: 
+    src: "https://github.com/prometheus/prometheus/releases/download/v2.27.1/prometheus-2.27.1.linux-amd64.tar.gz"
+    dest: /
+    remote_src: yes
+
+- name: cd into prometheus
+  command:
+    chdir: prometheus-2.27.1.linux-amd64/
+
+- name:  execute prometheus
+  shell: |
+    ./prometheus --config.file=./prometheus.yml

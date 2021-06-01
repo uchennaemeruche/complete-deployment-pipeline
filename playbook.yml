@@ -3,4 +3,5 @@
   hosts: all
   user: ubuntu
   roles:
-    - configure
+    # - configure
+    - prometheus
